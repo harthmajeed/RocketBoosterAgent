@@ -24,7 +24,3 @@ Good day.
 
 	NOTE: The resolution of this appplication is quite large, the background is 690x993. I had no issues
 		on my desktop 1920x1080 screen.
-
-5. The PDF should also be included "Rocket Booster Agent.pdf", this is the report.
-
-Again, thank you for the course, your support, and patience, it is truly appreciated and look forward to another class. Thank you!
