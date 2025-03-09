@@ -37,7 +37,7 @@ landingPadY = background.get_height()-landingPad.get_height()
 #variables
 global acc_rate
 acc_rate = 0.02
-fuel_rate = 0.1
+fuel_rate = 0.1  # Adjusted fuel consumption rate
 y_speed_rate = 1
 
 #class game object
@@ -56,7 +56,7 @@ class Rocket:
         self.y_speed = y_speed_rate
         self.x_acc = 0
         self.y_acc = acc_rate
-        self.fuel = 100
+        self.fuel = 100  # Increased initial fuel
         self.color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
         self.rect = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
 
@@ -98,8 +98,14 @@ class Rocket:
         x_diff = abs((self.x + (self.image.get_width()/2)) - (landingPadX + (landingPad.get_width()/2)))
         y_diff = (self.y + self.image.get_height()) - landingPadY
         distance = math.sqrt(pow(x_diff,2) + pow(y_diff,2))
-        score -= distance * 10
+        score -= distance * 5  # Reduced penalty for distance
         #print(x_diff, y_diff, distance, score, self.x_speed, self.y_speed)
+        # Penalize for high speeds when landing
+        if didAgentLand(self) and self.y_speed > 2.0:
+            score -= 2000
+        # Reward for successful landing
+        if didAgentLand(self) and self.y_speed <= 2.0:
+            score += 1000
         return int(score)
 
     #controls of the agent rocket
@@ -107,13 +113,13 @@ class Rocket:
         if self.leftThrustBool and self.fuel > 0:
             self.set_image(rocket_left)
             self.x_acc = -acc_rate
-        if self.rightThrustBool and self.fuel > 0:
+        elif self.rightThrustBool and self.fuel > 0:
             self.set_image(rocket_right)
             self.x_acc = acc_rate
-        if self.thrustBool and self.fuel > 0:
+        elif self.thrustBool and self.fuel > 0:
             self.set_image(rocket_thrust)
             self.y_acc = -acc_rate
-        if self.idleThrustBool:
+        else:
             self.set_image(rocket)
             self.x_acc = 0
             self.y_acc = acc_rate
@@ -264,7 +270,7 @@ def eval_genomes(genomes, config):
                 agent.leftThrustBool = True
             if output[2] > 0.5:
                 agent.rightThrustBool = True
-            if output[2] > 0.5:
+            if output[3] > 0.5:  # Corrected index for idle thrust
                 agent.idleThrustBool = True
 
         for agent in rockets:
